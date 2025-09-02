@@ -1,8 +1,10 @@
 import express from 'express';
-import {   resendOTP, sendSigninOTP, signin, signout, signup } from '../controllers/authController.js';
+import {   getMe, resendOTP, sendSigninOTP, signin, signout, signup } from '../controllers/authController.js';
 
 const router = express.Router();
 
+
+router.get("/me", getMe);
 router.post("/signup", signup); //working
 router.post("/signin", signin);  //working
 router.post("/signin/get-otp", sendSigninOTP); //working
