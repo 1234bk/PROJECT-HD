@@ -6,6 +6,8 @@ import { connectDB } from './database/dbConnection.js';
 // import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import dotenv from 'dotenv';
+import { protect } from './middleware/authMiddleware.js';
+import notesRoutes from './routes/notesRoutes.js';
 
 dotenv.config();
 export const app = express();
@@ -26,9 +28,10 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use('/auth', authRoutes);
+app.use('/note' , protect ,notesRoutes);
 // app.use(errorHandler)
 
-app.get('/',(req,res)=>{
-    res.send("Hello from Backend");
-})
+app.get("/", protect, (req, res) => {
+  res.status(200).json({ message: `Welcome ${req.user.name} to your dashboard` });
+});
 
