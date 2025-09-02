@@ -13,6 +13,19 @@ const generateToken = (user, keepLoggedIn) => {
   });
 };
 
+
+export const getMe = async (req, res) => {
+  try{
+    if(!req.user){
+      return res.status(401).json({message:"Not authorized"})
+    }
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // -------------------- SIGNUP --------------------
 // Send OTP for signup
 export const signup = async (req, res) => {
