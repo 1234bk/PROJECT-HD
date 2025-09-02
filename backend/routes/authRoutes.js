@@ -1,6 +1,5 @@
 import express from 'express';
 import {   resendOTP, sendSigninOTP, signin, signout, signup } from '../controllers/authController.js';
-import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -12,8 +11,6 @@ router.post("/signout", signout);
 // router.post("/google-signup", googleSignIn);
 
 
-router.get("/", protect, (req, res) => {
-  res.status(200).json({ message: `Welcome ${req.user.name} to your dashboard` });
-});
+
 
 export default router;
