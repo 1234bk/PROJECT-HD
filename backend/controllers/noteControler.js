@@ -25,7 +25,7 @@ export const addNote = async (req, res) => {
 // Get All Notes for User
 export const getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user._id });
+    const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.status(200).json(notes);
   } catch (error) {
     console.error(error);

@@ -1,25 +1,33 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+ 
   // Check login status on app load
   useEffect(() => {
-    const checkAuth = async () => {
+     const fetchUser = async () => {
       try {
-        const res = await api.get("/auth/me"); // backend endpoint
-        setUser(res.data);
+        const res = await api.get("/auth/me"); // backend route
+        setUser(res.data.user);
+        console.log("response from getMe at auth page", res.data.user);
+        setLoading(false);
+    
       } catch (err) {
-        setUser(null);
-      } finally {
+        console.error("Error fetching user:", err);
+           navigate("/signin");
+        setUser(null); // reset if not logged in
+        
+      }finally {
         setLoading(false);
       }
     };
-    checkAuth();
+
+    fetchUser();
   }, []);
 
   return (

@@ -15,14 +15,17 @@ const generateToken = (user, keepLoggedIn) => {
 
 
 export const getMe = async (req, res) => {
-  try{
-    if(!req.user){
-      return res.status(401).json({message:"Not authorized"})
-    }
-    res.status(200).json(req.user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Not logged in" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const user = await User.findById(decoded.id).select("name email");
+if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
   }
 };
 
@@ -32,7 +35,7 @@ export const signup = async (req, res) => {
   try {
     const { name, email, dateOfBirth } = req.body;
     if (!name || !email || !dateOfBirth)
-      return res.status(400).json({ message: "All fields required" });
+      return res.status(400).json({ message: " All fields required" });
 
     let user = await User.findOne({ email });
     if (!user) user = new User({ name, email, dateOfBirth });
@@ -45,6 +48,9 @@ export const signup = async (req, res) => {
     await user.save();
 
     await sendOTPEmail(email, otp);
+
+    await sendWelcomeEmail(user.email, user.name);
+
 
     res.status(200).json({ message: "OTP sent to your email" });
   } catch (error) {
@@ -105,9 +111,7 @@ export const signin = async (req, res) => {
     });
 
     
-    await sendWelcomeEmail(user.email, user.name);
-
-
+    
     res.status(200).json({ message: "Logged in successfully", user });
   } catch (error) {
     console.error(error);
