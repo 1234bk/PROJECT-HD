@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { BrowserRouter, Routes ,Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 
-import Home from './pages/home.jsx'
-import Signup from './pages/signup'
-import Signin from './pages/signin'
+import Home from './pages/Home.jsx'
+import Signup from './pages/Signup'
+import Signin from './pages/Signin'
 import ProtectedRoute from './contexts/ProtectedRoute'
 
 function App() {
