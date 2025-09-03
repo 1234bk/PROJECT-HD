@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000", // your backend URL
+  baseURL: "https://project-hd.onrender.com", // your backend URL
   withCredentials: true, // important for cookies
 });
 
