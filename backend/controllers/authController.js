@@ -38,7 +38,11 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: " All fields required" });
 
     let user = await User.findOne({ email });
-    if (!user) user = new User({ name, email, dateOfBirth });
+    if(user)  {return res
+        .status(400)
+        .json({ message: "User already exists with this email" });}
+
+     user = new User({ name, email, dateOfBirth });
 
     // Generate OTP and save in DB
     const otp = generateOTP();
@@ -107,7 +111,9 @@ export const signin = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: user.keepLoggedIn ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
+    maxAge: user.keepLoggedIn 
+    ? 30 * 24 * 60 * 60 * 1000   // 30 days
+    : 10  * 60 * 1000    //10 minutes
     });
 
     
