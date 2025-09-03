@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { BrowserRouter, Routes ,Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 
-import Home from './pages/home'
+import Home from './pages/home.jsx'
 import Signup from './pages/signup'
 import Signin from './pages/signin'
 import ProtectedRoute from './contexts/ProtectedRoute'
