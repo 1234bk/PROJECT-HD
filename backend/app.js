@@ -28,7 +28,7 @@ app.use(express.urlencoded({extended:true}));
 
 
 app.use('/auth', authRoutes);
-app.use('/note' , protect ,notesRoutes);
+app.use('/note'  ,notesRoutes);
 // app.use(errorHandler)
 
 app.get("/", protect, (req, res) => {

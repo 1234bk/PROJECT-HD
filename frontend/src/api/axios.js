@@ -7,12 +7,12 @@ const api = axios.create({
 });
 
 // Add Authorization header if token in cookie
-api.interceptors.request.use((config) => {
-  const token = Cookies.get("token"); // or whatever you store in cookie
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// api.interceptors.request.use((config) => {
+//   const token = Cookies.get("token"); // or whatever you store in cookie
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
 
 export default api;
