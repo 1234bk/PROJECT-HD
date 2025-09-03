@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     
       } catch (err) {
         console.error("Error fetching user:", err);
-           navigate("/signin");
+          //  navigate("/signin");
         setUser(null); // reset if not logged in
         
       }finally {
