@@ -62,6 +62,7 @@ export default function Signin() {
       console.log("user at signup page after verifying otp" ,res.data.user); // store user in context
       navigate("/"); // redirect to home
     } catch (err) {
+      window.alert(err.response?.data?.message || "Something went wrong");
       setMessage(err.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
