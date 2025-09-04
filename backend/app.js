@@ -20,7 +20,10 @@ app.use(cors({
     origin:process.env.FRONTEND_URL,
     credentials:true
 }));
-
+// app.use(cors({
+//   origin: ["http://localhost:5173"], // frontend origin
+//   credentials: true,                 // only needed if you use cookies, optional here
+// }));
 
 app.use(express.json());
 app.use(cookieParser());
