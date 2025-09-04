@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api, { setAuthToken } from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
 import logo from './../assets/icon.png';
 import img from './../assets/container.png';
@@ -44,8 +44,8 @@ export default function Signup() {
     try {
       const res = await api.post("/auth/signup", {
         name: form.name,
-        dateOfBirth: form.dob,
-        email: form.email,
+  dateOfBirth: form.dob ? form.dob.toISOString() : "",
+  email: form.email,
 
         // name, email, dateOfBirth
       });
@@ -60,23 +60,49 @@ export default function Signup() {
   };
 
   // Step 2: Verify OTP (Sign in)
-  const handleSignup = async () => {
+  // const handleSignup = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await api.post("/auth/signin", {
+  //        email: form.email.trim(),
+  // otp: form.otp.toString().trim(),
+  //       keepLoggedIn: form.keepLoggedIn || false, 
+  //     });
+  //     const token = res.data.token;       // get token from backend
+  //   localStorage.setItem("token", token); // save token locally
+  //   setAuthToken(token);                 // attach token to future requests
+  //  setLoading(false);
+  //   setUser(res.data.user);              // save user in context
+  //   console.log("user at signup page after verifying otp", res.data.user);
+  //   navigate("/"); 
+  //   } catch (err) {
+  //     setMessage(err.response?.data?.message || "galat OTP");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+const handleSignup = async () => {
     setLoading(true);
     try {
       const res = await api.post("/auth/signin", {
         email: form.email,
         otp: form.otp,
+        keepLoggedIn: form.keepLoggedIn || false,
       });
-      setUser(res.data.user);
-      console.log("user at signup page after verifying otp" ,res.data.user); // store user in context
-      navigate("/"); // redirect to home
+      const token = res.data.token;       // get token from backend
+    localStorage.setItem("token", token); // save token locally
+    setAuthToken(token);                 // attach token to future requests
+      setLoading(false);
+    setUser(res.data.user);              // save user in context
+    console.log("user at signup page after verifying otp", res.data.user);
+    navigate("/"); 
     } catch (err) {
+      window.alert(err.response?.data?.message || "Something went wrong");
       setMessage(err.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     
 
@@ -180,7 +206,6 @@ export default function Signup() {
                   readOnly
                 placeholder="Your Name"
                 value={form.name}
-                onChange={handleChange}
                 className="w-full bg-transparent px-2 py-1 text-gray-900 outline-none"
               />
             </fieldset>
@@ -195,7 +220,6 @@ export default function Signup() {
   {/* DatePicker input */}
   <DatePicker
     selected={form.dob ? new Date(form.dob) : null}
-   onChange={handleChange}
      readOnly
     placeholderText="Select birthdate"
     className="w-full pl-10 bg-transparent py-1 text-gray-900 outline-none"
@@ -212,19 +236,35 @@ export default function Signup() {
                 name="email"
                   readOnly
                 value={form.email}
-                onChange={handleChange}
                 className="w-full bg-transparent px-2 py-1 text-gray-900 outline-none"
               />
             </fieldset>
 
 
-
-             <div className="relative w-full focus-within:border-blue-500">
+<div className="relative w-full   focus-within:border-blue-500">
               <input
                 type={isVisible ? "text" : "password"}
                 name="otp"
                 placeholder="OTP"
                 value={form.otp}
+                onChange={handleChange}
+                className="w-full focus-within:border-blue-500 border border-[#a7a0a0] text-[#a7a0a0]  rounded-lg p-3 pr-10 text-gray-900 outline-none"
+              />
+              <button
+                type="button"
+                onClick={toggleVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {isVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+              </button>
+            </div>
+             {/* <div className="relative w-full focus-within:border-blue-500">
+              <input
+                type={isVisible ? "text" : "password"}
+                name="otp"
+                placeholder="OTP"
+                value={form.otp}
+                 pattern="\d*" 
                 onChange={handleChange}
                 className="w-full focus-within:border-blue-500 border rounded-lg p-3 pr-10 text-gray-900 outline-none"
               />
@@ -235,7 +275,7 @@ export default function Signup() {
               >
                 {isVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
-            </div>
+            </div> */}
  </div>
 
             <button

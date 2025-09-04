@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api, { setAuthToken } from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
 import logo from './../assets/icon.png';
 import img from './../assets/container.png';
@@ -58,9 +58,13 @@ export default function Signin() {
         otp: form.otp,
         keepLoggedIn: form.keepLoggedIn || false,
       });
-      setUser(res.data.user);
-      console.log("user at signup page after verifying otp" ,res.data.user); // store user in context
-      navigate("/"); // redirect to home
+      const token = res.data.token;       // get token from backend
+    localStorage.setItem("token", token); // save token locally
+    setAuthToken(token);                 // attach token to future requests
+
+    setUser(res.data.user);              // save user in context
+    console.log("user at signup page after verifying otp", res.data.user);
+    navigate("/"); 
     } catch (err) {
       window.alert(err.response?.data?.message || "Something went wrong");
       setMessage(err.response?.data?.message || "Invalid OTP");

@@ -3,7 +3,7 @@ import axios from "axios";
 
 import { useAuth } from "../contexts/AuthContext";
 import { Trash2, PlusCircle, Check, Pencil } from "lucide-react"; // icons
-import api from "../api/axios";
+import api, { setAuthToken } from "../api/axios";
 import {  Navigate, useNavigate } from "react-router-dom";
 import logo from './../assets/icon.png';
 import img from './../assets/container.png';
@@ -21,10 +21,14 @@ export default function Home() {
   const [notesUpdated, setNotesUpdated] = useState(false);
 
   useEffect(() => {
+     if(!user) return;
    const fetchNotes = async () => {
       try {
         
-        const res = await api.get("/note");
+        const token = localStorage.getItem("token"); // get token
+    const res = await api.get("/note", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
         setNotes(res.data);
         console.log("notes at home",res.data);
       } catch (err) {
@@ -33,18 +37,19 @@ export default function Home() {
     };
     //  fetchUser();
     fetchNotes();
-}, [notesUpdated]); // empty array → runs only once on page load/refresh
+}, [user,notesUpdated]); // empty array → runs only once on page load/refresh
 
 
   // Create note
   const handleCreateNote = async () => {
     if (!newNote.trim()) return;
     try {
-      const res = await api.post("/note/add", {
-        user: user._id,
-        content: newNote,
-      });
-      setNotes([res.data, ...notes]);
+    const token = localStorage.getItem("token");
+    const res = await api.post("/note/add", 
+      { content: newNote },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+      setNotes([res.data.note, ...notes]);
         setNotesUpdated(prev => !prev);
       setNewNote("");
       setIsCreating(false);
@@ -60,7 +65,10 @@ export default function Home() {
   // Delete note
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/note/${id}`);
+    const token = localStorage.getItem("token");
+    await api.delete(`/note/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
       setNotes(notes.filter((n) => n._id !== id));
         setNotesUpdated(prev => !prev);
     } catch (err) {
@@ -78,9 +86,11 @@ export default function Home() {
   const handleSaveEdit = async (id) => {
     if (!editContent.trim()) return;
     try {
-      const res = await api.put(`/note/${id}`, {
-        content: editContent,
-      });
+    const token = localStorage.getItem("token");
+    const res = await api.put(`/note/${id}`, 
+      { content: editContent },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
       setNotes(notes.map((n) => (n._id === id ? res.data : n)));
         setNotesUpdated(prev => !prev);
       setEditingId(null);
@@ -90,15 +100,13 @@ export default function Home() {
     }
   };
 
-  const handlesignout = async () => {
-    try {
-      await api.post("/auth/signout");
-      navigate("/signin");
-    } catch (err) {
-      console.error(err);
-    }
-  };
   
+   const handlesignout = () => {
+  localStorage.removeItem("token"); // remove JWT
+  setAuthToken(null);
+  navigate("/signin");
+};
+
 
   return (
     // <div className="min-h-screen bg-white flex flex-col items-center p-4">

@@ -1,18 +1,17 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "https://project-hd.onrender.com", // your backend URL
-  withCredentials: true, // important for cookies
+  baseURL: "https://project-hd.onrender.com",
+  // baseURL: "http://localhost:3000", // your backend URL (use localhost for testing)
 });
 
-// Add Authorization header if token in cookie
-// api.interceptors.request.use((config) => {
-//   const token = Cookies.get("token"); // or whatever you store in cookie
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+// Helper to set token in headers dynamically
+export const setAuthToken = (token) => {
+  if (token) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common["Authorization"];
+  }
+};
 
 export default api;
