@@ -116,16 +116,26 @@ if (existing) {
 
 
 export const getAnalysisForUser = async (req, res) => {
+  console.log("getAnalysisForUser called");
   try {
     const userId = req.user?.id || req.user?._id;
-    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+    console.log("Extracted userId:", userId);
+    
+    if (!userId) {
+      console.log("userId not found");
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
     const analysis = await SkinAnalysis.findOne({ user: userId });
-    if (!analysis) return res.status(404).json({ success: false, message: "No analysis found" });
+    if (!analysis) {
+      console.log("No 000000000000000000000000000000000000000000000000000000000000analysis found");
+      return res.status(404).json({ success: false, message: "No analysis found" });
+    }
 
+    console.log("Analysis found. Sending response...");
     res.status(200).json({ success: true, data: analysis });
   } catch (err) {
-    console.error("getAnalysisForUser error:", err);
+    console.error("getAnalysisForUser  main catch main error error:", err);
     res.status(500).json({ success: false, message: "Failed to fetch analysis" });
   }
 };
@@ -136,8 +146,11 @@ export const checkresultuser = async(req,res)=>{
     if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const analysis = await SkinAnalysis.findOne({ user: userId });
-    if (!analysis) return res.status(404).json({ success: false, message: "No analysis found" });
-    console.log("analysis in checkresultuser",analysis);
+    if (!analysis){
+        console.log("Nnnnnnnnnnnnnnnnnnno analysis found");
+    return res.status(404).json({ success: false, message: "No analysis found" });
+     }
+       console.log("analysis in checkresultuser",analysis);
     res.status(200).json({ success: true, data: analysis });
   } catch (err) {
     console.error("getAnalysisForUser error:", err);
