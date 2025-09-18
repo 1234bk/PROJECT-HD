@@ -143,17 +143,17 @@ export const getAnalysisForUser = async (req, res) => {
 export const checkresultuser = async(req,res)=>{
   try {
     const userId = req.user?.id || req.user?._id;
-    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+    if (!userId) return res.status(401).json({ success: false, message: "phle verify hokar a Unauthorized" });
 
     const analysis = await SkinAnalysis.findOne({ user: userId });
     if (!analysis){
         console.log("Nnnnnnnnnnnnnnnnnnno analysis found");
-    return res.status(404).json({ success: false, message: "No analysis found" });
+    return res.status(404).json({ success: false, message: "mila hi nhi bc analysisNo analysis found" });
      }
        console.log("analysis in checkresultuser",analysis);
     res.status(200).json({ success: true, data: analysis });
   } catch (err) {
     console.error("getAnalysisForUser error:", err);
-    res.status(500).json({ success: false, message: "Failed to fetch analysis" });
+    res.status(500).json({ success: false, message: "tech he nhi kar paya Failed to fetch analysis" });
   }
 }

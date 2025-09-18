@@ -196,7 +196,7 @@ export default function Signin() {
         </>
       )}
 
-      {/* {message && <p className="text-center text-sm text-gray-600 mt-4">{message}</p>} */}
+      {message && <p className="text-center text-sm text-gray-600 mt-4">{message}</p>}
 
       <p className="text-center text-gray-600  text-sm mt-6">
         Need an account?{" "}
