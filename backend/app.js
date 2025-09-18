@@ -21,13 +21,6 @@ if (!process.env.GROQ_API_KEY) {
     console.error("ggggggggggggggggggggggggggggggggggggggMissing GROQ API Key. Please set GROQ_API_KEY in your .env file.");
     process.exit(1);
 }
-if (process.env.GROQ_API_KEY) {
-    console.error("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa GROQ API Key. Please set " , process.env.GROQ_API_KEY);
-    
-}
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
 
 
 

@@ -54,8 +54,6 @@ The output must be pure JSON only, strictly following this format:
 `;
 };
 
- // Add this import at the top
-// console.log("huaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa          apikey", process.env.GROQ_API_KEY );
 const groq = new Groq({
     apiKey:"process.env.GROQ_API_KEY )",
     
