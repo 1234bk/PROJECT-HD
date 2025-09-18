@@ -104,11 +104,11 @@ const Home = () => {
 
             {!analysisData ? (
         // If no analysis → single button
-          <div className='p-1 mx-auto bg-gradient-to-r from-cyan-600 to-teal-500  rounded-full shadow-lg hover:shadow-xl  transform hover:-translate-y-1 transition-transform duration-300' >
+          // <div className='p-1 mx-auto bg-gradient-to-r from-cyan-600 to-teal-500  rounded-full shadow-lg hover:shadow-xl  transform hover:-translate-y-1 transition-transform duration-300' >
         
         <button
           onClick={() => navigate("/form")}
-          className="group inline-flex items-center gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white md:py-3 py-2 md:px-6 px-3 rounded-full shadow-xl hover:shadow-xl transform hover:-translate-y-1 animate-pulse transition-transform duration-300"
+          className="group border-2  border-white inline-flex items-center gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white md:py-3 py-3 md:px-6 px-3 rounded-full shadow-xl hover:shadow-xl transform hover:-translate-y-1 animate-pulse transition-transform duration-300"
         >
           <span className="font-semibold md:text-lg">Start Your Skin Assessment</span>
           <ArrowRight
@@ -116,7 +116,7 @@ const Home = () => {
             size={20}
           />
         </button>
-        </div>
+        // </div>
       ) : (
         // If analysis exists → show 2 buttons
         <div className="flex flex-col sm:flex-row gap-5   md:pt-0">

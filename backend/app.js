@@ -6,6 +6,7 @@ import { connectDB } from './database/dbConnection.js';
 // import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import dotenv from 'dotenv';
+import Groq from 'groq-sdk'; 
 import { protect } from './middleware/authMiddleware.js';
 import notesRoutes from './routes/notesRoutes.js';
 import skinroutes from './routes/skinroutes.js';
@@ -17,10 +18,16 @@ connectDB();
 
 
 if (!process.env.GROQ_API_KEY) {
-    console.error("Missing GROQ API Key. Please set GROQ_API_KEY in your .env file.");
+    console.error("ggggggggggggggggggggggggggggggggggggggMissing GROQ API Key. Please set GROQ_API_KEY in your .env file.");
     process.exit(1);
 }
-
+if (process.env.GROQ_API_KEY) {
+    console.error("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa GROQ API Key. Please set " , process.env.GROQ_API_KEY);
+    
+}
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 
 

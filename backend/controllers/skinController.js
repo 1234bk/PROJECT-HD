@@ -1,5 +1,7 @@
 import Groq from 'groq-sdk'; 
 import SkinAnalysis from '../models/Skinanalysis.js';
+import dotenv from "dotenv";
+dotenv.config();
 
 const buildGroqPrompt = (userData) => {
   return `
@@ -53,9 +55,9 @@ The output must be pure JSON only, strictly following this format:
 };
 
  // Add this import at the top
-console.log("apikey", process.env.GROQ_API_KEY );
+// console.log("huaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa          apikey", process.env.GROQ_API_KEY );
 const groq = new Groq({
-    apiKey:"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",
+    apiKey:"process.env.GROQ_API_KEY )",
     
 });
 
