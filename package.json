@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "groq-js": "^1.18.0"
+  }
+}

@@ -1,13 +1,15 @@
 import { useState } from 'react'
 
 // import ProtectedRoute from './contexts/ProtectedRoute'
-import { BrowserRouter, Routes ,Route } from 'react-router-dom'
+import { BrowserRouter, Routes ,Route, Form } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
-
 import Home from './pages/Home.jsx'
-import Signup from './pages/Signup'
-import Signin from './pages/Signin'
+import Signup from './pages/Signup.jsx'
+import Signin from './pages/Signin.jsx'
 import ProtectedRoute from './contexts/ProtectedRoute'
+import Chat from './pages/Chat.jsx'
+import Formcom from './components/Formcom.jsx'
+import ResultPage from './components/ResultPage.jsx'
 
 function App() {
 
@@ -23,7 +25,27 @@ function App() {
                 <Home />
             </ProtectedRoute>
               } />
-              {/* <Route path="/home" element={<Home />} />  */}
+
+             
+
+               <Route path="/chat" element={
+              <ProtectedRoute>
+                < Chat />
+            </ProtectedRoute>
+              } />
+
+               <Route path="/result" element={
+              <ProtectedRoute>
+                < ResultPage />
+            </ProtectedRoute>
+              } />
+
+             <Route path="/form" element={
+              <ProtectedRoute>
+                < Formcom />
+            </ProtectedRoute>
+              } />
+
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
 

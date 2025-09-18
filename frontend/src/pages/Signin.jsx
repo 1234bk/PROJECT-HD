@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { setAuthToken } from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
-import logo from './../assets/icon.png';
-import img from './../assets/container.png';
+import logo from './../assets/logomain.png';
+import img from './../assets/graphic.png';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 
@@ -75,7 +75,7 @@ export default function Signin() {
 
   return (
 
-<div className="min-h-screen flex flex-col lg:flex-row font-inter">
+<div className="min-h-screen bg-teal-50 flex flex-col lg:flex-row font-inter">
   {/* Left: Form */}
  
   <div className="flex-1 flex lg:items-center items-start justify-center px-4 lg:px-16 pt-[55px]  lg:pt-0">
@@ -83,14 +83,14 @@ export default function Signin() {
      {/* //desktop logo */}
  <div className="absolute top-4 left-4 hidden lg:flex items-center">
     <img src={logo} alt="HD" className="w-[32px] h-[32px]" />
-    <h2 className="ml-2 font-inter font-semibold text-2xl text-[#232323]">HD</h2>
+    <h2 className="ml-2 font-inter font-semibold text-2xl text-bold text-[#232323]">SkinEdu</h2>
   </div>
 
     <div className="w-full max-w-md  gap-4 p-5 lg:p-8">
       {/* Logo */}
       <div className=" lg:hidden flex justify-center mb-6">
         <img src={logo} alt="HD" className="w-[32px] h-[32px]" />
-        <h2 className="ml-2 font-inter font-semibold text-2xl text-center text-[#232323]">HD</h2>
+        <h2 className="ml-2 font-inter font-semibold text-2xl text-center text-[#232323]">SkinEdu</h2>
       </div>
 
       <h1 className="text-center lg:text-left text-3xl lg:text-4xl font-bold mb-2">Sign in</h1>
@@ -99,7 +99,7 @@ export default function Signin() {
       {/* Step 1 & Step 2 */}
       {step === 1 && (
         <>
-          <fieldset className="rounded-lg flex items-center border border-[#a7a0a0] text-[#a7a0a0]   focus-within:border-blue-500 focus-within:text-blue-500 p-2 mb-4">
+          <fieldset className="rounded-lg flex items-center border border-[#a7a0a0] text-[#a7a0a0]   focus-within:border-teal-500 focus-within:text-teal-500 p-2 mb-4">
             <legend className="px-1 text-sm">Email</legend>
             <input
               type="email"
@@ -114,7 +114,7 @@ export default function Signin() {
           <button
             onClick={handleGetOtp}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+            className={`w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-3 rounded-lg hover:bg-teal-700  disabled:bg-teal-300 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {loading ? "Sending OTP..." : "Get OTP"}
           </button>
@@ -124,8 +124,8 @@ export default function Signin() {
       {step === 2 && (
         <>
           <div className="space-y-4">
-            <fieldset className="rounded-lg border border-blue-500 flex items-center p-2">
-              <legend className="px-1 text-sm text-blue-500">Email</legend>
+            <fieldset className="rounded-lg border border-teal-500 flex items-center p-2">
+              <legend className="px-1 text-sm text-teal-500">Email</legend>
               <input
                 type="email"
                 name="email"
@@ -137,14 +137,14 @@ export default function Signin() {
             </fieldset>
 
             {/* OTP with toggle */}
-            <div className="relative w-full   focus-within:border-blue-500">
+            <div className="relative w-full   focus-within:border-teal-500">
               <input
                 type={isVisible ? "text" : "password"}
                 name="otp"
                 placeholder="OTP"
                 value={form.otp}
                 onChange={handleChange}
-                className="w-full focus-within:border-blue-500 border border-[#a7a0a0] text-[#a7a0a0]  rounded-lg p-3 pr-10 text-gray-900 outline-none"
+                className="w-full focus-within:border-teal-500 border border-[#a7a0a0] text-[#a7a0a0]  rounded-lg p-3 pr-10  outline-none"
               />
               <button
                 type="button"
@@ -155,7 +155,7 @@ export default function Signin() {
               </button>
             </div>
 
-            <h1 onClick={handleGetOtp} className="text-start cursor-pointer text-sm underline font-semibold text-[#367AFF] cursor-pointer">
+            <h1 onClick={handleGetOtp} className="text-start cursor-pointer text-sm underline font-semibold text-teal-500 ">
               Resend OTP
             </h1>
 
@@ -168,7 +168,7 @@ export default function Signin() {
             >
               <div
                 className={`w-5 h-5 border rounded-sm flex items-center justify-center mr-2
-                  ${form.keepLoggedIn ? "bg-blue-600 border-blue-600" : "bg-white border-2 border-black"}`}
+                  ${form.keepLoggedIn ? "bg-teal-600 border-teal-600" : "bg-white border-2 border-black"}`}
               >
                 {form.keepLoggedIn && (
                   <svg
@@ -189,7 +189,7 @@ export default function Signin() {
           <button
             onClick={handleSignup}
             disabled={loading}
-            className="w-full bg-[#367AFF] text-white py-3 rounded-lg mt-6 hover:bg-blue-700 disabled:bg-blue-300"
+            className={`w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-3 rounded-lg mt-6 hover:bg-teal-700 disabled:bg-teal-300 ${loading ? "opacity-50 cursor-not-allowed" : ""}  `}
           >
             {loading ? "Verifying..." : "Sign In"}
           </button>
@@ -201,7 +201,7 @@ export default function Signin() {
       <p className="text-center text-gray-600  text-sm mt-6">
         Need an account?{" "}
         <span
-          className="text-blue-600 cursor-pointer underline"
+          className="text-teal-600 cursor-pointer underline"
           onClick={() => navigate("/signup")}
         >
           Create one

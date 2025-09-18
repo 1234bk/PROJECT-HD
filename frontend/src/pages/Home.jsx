@@ -1,341 +1,170 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MessageCircle, ArrowRight, User, LogOut, RefreshCw, FileText } from 'lucide-react';
+import logo from './../assets/logomain.png';
 import { useAuth } from "../contexts/AuthContext";
-import { Trash2, PlusCircle, Check, Pencil } from "lucide-react"; // icons
-import api, { setAuthToken } from "../api/axios";
-import {  Navigate, useNavigate } from "react-router-dom";
-import logo from './../assets/icon.png';
-import img from './../assets/container.png';
+import userAvatar from './../assets/avatar.webp'; // Assuming this is the user's avatar
+import graphic from './../assets/good.png'; // Assuming this is the user's avatar
+import api, { setAuthToken } from '../api/axios';
 
-
-
-export default function Home() {
-    const navigate = useNavigate();
-  const { user } = useAuth();
-  const [notes, setNotes] = useState([]);
-  const [isCreating, setIsCreating] = useState(false);
-  const [newNote, setNewNote] = useState("");
-  const [editingId, setEditingId] = useState(null);
-  const [editContent, setEditContent] = useState("");
-  const [notesUpdated, setNotesUpdated] = useState(false);
+const Home = () => {
+  const navigate = useNavigate();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user   } = useAuth(); // Removed setUser as it wasn't used
+   const [analysisData, setAnalysisData] = useState(null);
+  const handleSignOut = () => {
+     const userConfirmed = confirm("Do you really want to sign out?");
+    if (userConfirmed) {
+      localStorage.removeItem("token");
+      setAuthToken(null);
+    setShowUserMenu(false); // Close menu on navigation
+    navigate('/signin');
+    } 
+    
+    
+  };
 
   useEffect(() => {
-     if(!user) return;
-   const fetchNotes = async () => {
-      try {
-        
-        const token = localStorage.getItem("token"); // get token
-    const res = await api.get("/note", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-        setNotes(res.data);
-        console.log("notes at home",res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    //  fetchUser();
-    fetchNotes();
-}, [user,notesUpdated]); // empty array → runs only once on page load/refresh
-
-
-  // Create note
-  const handleCreateNote = async () => {
-    if (!newNote.trim()) return;
+   const checkresult = async () => {
+    
     try {
-    const token = localStorage.getItem("token");
-    const res = await api.post("/note/add", 
-      { content: newNote },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-      setNotes([res.data.note, ...notes]);
-        setNotesUpdated(prev => !prev);
-      setNewNote("");
-      setIsCreating(false);
+      const response = await api.get("/skinanalysis/check");
+      
+      setAnalysisData(response.data.data || null);
+      console.log("working skinannalysis/check function");
+      
     } catch (err) {
-      console.error(err);
+      console.error("yha dikkat hai Failed to get analysis:", err);
     }
-  };
-// router.get("/", getNotes);  //working
-// router.put("/:id", updateNote);
-
-
-
-  // Delete note
-  const handleDelete = async (id) => {
-    try {
-    const token = localStorage.getItem("token");
-    await api.delete(`/note/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-      setNotes(notes.filter((n) => n._id !== id));
-        setNotesUpdated(prev => !prev);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Edit note
-  const handleEdit = (id, content) => {
-    setEditingId(id);
-    setEditContent(content);
-  };
-
-  // Save edited note
-  const handleSaveEdit = async (id) => {
-    if (!editContent.trim()) return;
-    try {
-    const token = localStorage.getItem("token");
-    const res = await api.put(`/note/${id}`, 
-      { content: editContent },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-      setNotes(notes.map((n) => (n._id === id ? res.data : n)));
-        setNotesUpdated(prev => !prev);
-      setEditingId(null);
-      setEditContent("");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  
-   const handlesignout = () => {
-  localStorage.removeItem("token"); // remove JWT
-  setAuthToken(null);
-  navigate("/signin");
-};
-
-
-  return (
-    // <div className="min-h-screen bg-white flex flex-col items-center p-4">
-    //   {/* Header */}
-    //   <div className="w-full max-w-md flex justify-between items-center mb-6">
-    //      <img src={logo} alt="HD" className="w-[32px] h-[32px]" />
-           
-    //     <h1 className="text-lg font-semibold">Dashboard</h1>
-    //     <button 
-    //     onClick={handlesignout}
-    //     className="text-blue-600 hover:underline">Sign Out</button>
-    //   </div>
-
-    //   {/* User Card */}
-    //   <div className="w-full max-w-md border rounded-lg shadow-sm p-4 mb-4">
-    //     <p className="font-semibold text-gray-800">
-    //       Welcome, {user?.name || "Guest"} !
-    //     </p>
-    //     <p className="text-gray-500 text-sm">Email: {user?.email}</p>
-    //   </div>
-
-    //   {/* Create Note Section */}
-    //   <div className="w-full max-w-md mb-6">
-    //     {isCreating ? (
-    //       <div className="flex items-center gap-2">
-    //         <input
-    //           type="text"
-    //           value={newNote}
-    //           onChange={(e) => setNewNote(e.target.value)}
-    //           placeholder="Write your note..."
-    //           className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-    //         />
-    //         <button
-    //           onClick={handleCreateNote}
-    //           className="bg-blue-600 text-white p-2 rounded-md"
-    //         >
-    //           <Check size={20} />
-    //         </button>
-    //       </div>
-    //     ) : (
-    //       <button
-    //         onClick={() => setIsCreating(true)}
-    //         className="w-full bg-blue-600 text-white py-2 rounded-md font-medium flex justify-center items-center gap-2"
-    //       >
-    //         <PlusCircle size={20} /> Create Note
-    //       </button>
-    //     )}
-    //   </div>
-
-    //   {/* Notes List */}
-    //   <div className="w-full max-w-md">
-    //     <h2 className="font-medium mb-2">Notes</h2>
-    //     <div className="space-y-2">
-    //       {notes.length > 0 ? (
-    //         notes.map((note) => (
-    //           <div
-    //             key={note._id}
-    //             className="flex justify-between items-center border rounded-md p-3"
-    //           >
-    //             {editingId === note._id ? (
-    //               <div className="flex items-center gap-2 w-full">
-    //                 <input
-    //                   type="text"
-    //                   value={editContent}
-    //                   onChange={(e) => setEditContent(e.target.value)}
-    //                   className="flex-1 border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500"
-    //                 />
-    //                 <button
-    //                   onClick={() => handleSaveEdit(note._id)}
-    //                   className="text-green-600"
-    //                 >
-    //                   <Check size={18} />
-    //                 </button>
-    //               </div>
-    //             ) : (
-    //               <>
-    //                 <span>{note.content}</span>
-    //                 <div className="flex items-center gap-3">
-    //                   <button
-    //                     onClick={() => handleEdit(note._id, note.content)}
-    //                     className="text-gray-500 hover:text-blue-500"
-    //                   >
-    //                     <Pencil size={18} />
-    //                   </button>
-    //                   <button
-    //                     onClick={() => handleDelete(note._id)}
-    //                     className="text-gray-500 hover:text-red-500"
-    //                   >
-    //                     <Trash2 size={18} />
-    //                   </button>
-    //                 </div>
-    //               </>
-    //             )}
-    //           </div>
-    //         ))
-    //       ) : (
-    //         <p className="text-gray-500">No notes yet.</p>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
-
-
 
     
+  };
+  checkresult();
+  }, []);
 
-<div className="min-h-screen flex flex-col lg:flex-row font-inter">
-  {/* Left: Form */}
- 
-  <div className="min-h-screen bg-white flex flex-col items-center w-full lg:w-[40%] p-4 font-inter">
-  {/* Header */}
-  <div className="w-full mt-2  max-w-4xl flex justify-between items-center mb-6">
-    <div className="flex items-center gap-4">
-      <img src={logo} alt="HD" className="w-[32px] h-[32px]" />
-      <h1 className="text-xl font-semibold">Dashboard</h1>
-    </div>
-    <button
-      onClick={handlesignout}
-      className="text-blue-600 underline"
-    >
-      Sign Out
-    </button>
-  </div>
-
-  {/* User Card */}
   
-  <div className="w-full max-w-md bg-white mt-5 lg:mt-15 rounded-lg shadow-xl border border-gray-300 p-5 mb-6">
-  <p className="text-xl mb-5 font-bold text-black">
-    Welcome, {user?.name }!
-  </p>
-  <p className="text-sm mb-2 text-gray-600">Email: {user?.email}</p>
-</div>
 
-  {/* Create Note Section */}
-  <div className="w-full max-w-md mb-6">
-    {isCreating ? (
-      <div className="flex items-center gap-2">
-        <input
-          type="text"
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Write your note..."
-          className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-        />
-        <button
-          onClick={handleCreateNote}
-          className="bg-[#367AFF] text-white p-2 rounded-md"
-        >
-          <Check size={20} />
-        </button>
-      </div>
-    ) : (
-      <button
-        onClick={() => setIsCreating(true)}
-        className="w-full mt-2 bg-[#367AFF] text-white py-3 rounded-md font-medium flex justify-center items-center gap-2"
-      >
-         Create Note
-      </button>
-    )}
-  </div>
+  return (
 
-  {/* Notes List */}
-  <div className="w-full max-w-md">
-    <div className="flex justify-between items-center mb-2">
-      <h2 className="font-medium">Notes</h2>
-     
-    </div>
-    <div className="space-y-2">
-      {notes.length > 0 ? (
-        notes.map((note) => (
-          <div
-            key={note._id}
-            className="flex justify-between items-center border rounded-lg shadow-lg  border-gray-300  p-3"
-          >
-            {editingId === note._id ? (
-              <div className="flex items-center gap-2 w-full">
-                <input
-                  type="text"
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  className="flex-1 border rounded-md px-2 py-1 focus:outline-none focus:border-blue-500"
-                />
-                <button
-                  onClick={() => handleSaveEdit(note._id)}
-                  className="text-green-600"
-                >
-                  <Check size={18} />
-                </button>
-              </div>
-            ) : (
-              <>
-                <span>{note.content}</span>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => handleEdit(note._id, note.content)}
-                    className="text-gray-500 hover:text-blue-500"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(note._id)}
-                    className="text-gray-500 hover:text-red-500"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </>
-            )}
+ <div className="min-h-screen bg-gradient-to-br from-teal-50 to-white font-inter text-slate-800 flex flex-col">
+
+      {/* Navbar */}
+      <nav className="bg-gradient-to-br from-teal-50 to-white backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="Logo" className="w-10 h-10" />
+            <h1 className="text-xl md:text-2xl font-bold text-slate-800">SkinEdu</h1>
           </div>
-        ))
+
+          <div className="relative">
+            <img
+              src={userAvatar}
+              alt="User Avatar"
+              className="w-10 h-10 rounded-full cursor-pointer ring-2 ring-offset-2 ring-cyan-500/50 hover:ring-cyan-500 transition-all"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            />
+
+            <div className={`absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-xl overflow-hidden transition-all duration-300 ease-in-out transform ${showUserMenu ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+              <div className="px-4 py-3">
+                <p className="text-sm text-slate-500">Signed in as</p>
+                <p className="font-semibold truncate">{user?.name || 'User'}</p>
+              </div>
+              <div className="border-t border-slate-200"></div>
+              
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-slate-100 transition-colors"
+              >
+                <LogOut size={18} className="text-slate-600" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="flex-1 flex items-start md:items-center justify-center px-2 py-10">
+        <div className="flex flex-col-reverse md:flex-row items-center pt-14 md:pt-0 w-full  space-y-10 md:space-y-0 md:space-x-10">
+
+          {/* Text Content */}
+          <div className="md:min-w-[40%] space-y-6 text-left p-5 md:p-0 md:pl-12">
+            <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight text-slate-900">
+              Hello,{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-600">
+                {user?.name
+                  ? user.name.charAt(0).toUpperCase() + user.name.slice(1)
+                  : 'Guest'}
+              </span>
+            </h1>
+
+            <p className="md:text-xl  text-slate-600 max-w-xl">
+              Welcome to your personalized skincare journey. Get tailored advice, insights, and recommendations designed for your unique skin needs.
+            </p>
+
+            {!analysisData ? (
+        // If no analysis → single button
+          <div className='p-1 mx-auto bg-gradient-to-r from-cyan-600 to-teal-500  rounded-full shadow-lg hover:shadow-xl  transform hover:-translate-y-1 transition-transform duration-300' >
+        
+        <button
+          onClick={() => navigate("/form")}
+          className="group inline-flex items-center gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white md:py-3 py-2 md:px-6 px-3 rounded-full shadow-xl hover:shadow-xl transform hover:-translate-y-1 animate-pulse transition-transform duration-300"
+        >
+          <span className="font-semibold md:text-lg">Start Your Skin Assessment</span>
+          <ArrowRight
+            className="transition-transform duration-300 group-hover:translate-x-1"
+            size={20}
+          />
+        </button>
+        </div>
       ) : (
-        <p className="text-gray-500">No notes yet.</p>
+        // If analysis exists → show 2 buttons
+        <div className="flex flex-col sm:flex-row gap-5   md:pt-0">
+          <div className='p-1 mx-auto bg-gradient-to-r from-cyan-600 to-teal-500  rounded-full shadow-lg hover:shadow-xl  transform hover:-translate-y-1 transition-transform duration-300' >
+          <button
+            onClick={() => navigate("/result")}
+            className="group border-2 border-white inline-flex items-center justify-center gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white md:py-3 py-2 md:px-6 px-3 rounded-full shadow-xl hover:shadow-xl transform "
+          >
+            <FileText className="transition-transform duration-300 group-hover:rotate-6" size={20} />
+            <span className="font-semibold md:text-lg">View My Results</span>
+          </button>
+          </div>
+         <div className='p-1 mx-auto bg-gradient-to-r from-teal-500 to-cyan-600  rounded-full shadow-lg hover:shadow-xl  transform hover:-translate-y-1 transition-transform duration-300' >
+         
+          <button
+            onClick={() => navigate("/form")}
+            className="group border-2 border-white inline-flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-600 to-teal-500 text-white md:py-3 py-2 md:px-6 px-3 rounded-full shadow-xl hover:shadow-xl transform "
+          >
+            <RefreshCw className="transition-transform duration-300 group-hover:rotate-180" size={20} />
+            <span className="font-semibold md:text-lg">Do a New Analysis</span>
+          </button>
+           </div>
+        </div>
       )}
+          </div>
+
+          {/* Image Content */}
+          <div className="">
+            <img 
+              src={graphic} 
+              alt="Skincare illustration" 
+              className="w-[100%] h-[100%] hidden md:block  mx-auto rounded-lg"
+            />
+          </div>
+        </div>
+      </main>
+
+      {/* Floating Chat Button */}
+      <button
+        onClick={() => navigate('/chat')}
+        className="fixed z-50 bottom-6 right-6 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-full p-4 shadow-2xl flex items-center gap-3 animate-bounce hover:scale-110 transition-transform duration-300 min-w-[220px]"
+      >
+        <MessageCircle size={24} />
+        <span className="font-semibold">Ask me anything</span>
+      </button>
     </div>
-  </div>
-</div>
-
-
-  {/* Right: Image */}
-  <div className="hidden h-screen  lg:flex flex-[2] p-[12px]">
-  <div className="w-full rounded-lg overflow-hidden">
-    <img
-      src={img} // replace with your imported image
-      alt="Side Illustration"
-      className="w-full  object-cover"
-    />
-  </div>
-</div>
-</div>
-
+    
   );
-}
+};
+
+export default Home;
