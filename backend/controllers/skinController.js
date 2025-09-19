@@ -3,6 +3,12 @@ import SkinAnalysis from '../models/Skinanalysis.js';
 import dotenv from "dotenv";
 dotenv.config();
 
+
+const groq = new Groq({
+    apiKey:process.env.GROQ_API_KEY ,
+    
+});
+
 const buildGroqPrompt = (userData) => {
   return `
 You are an expert dermatologist and nutritionist specialized in skin care. 
@@ -54,10 +60,6 @@ The output must be pure JSON only, strictly following this format:
 `;
 };
 
-const groq = new Groq({
-    apiKey:process.env.GROQ_API_KEY ,
-    
-});
 
 
 
@@ -132,7 +134,7 @@ export const getAnalysisForUser = async (req, res) => {
       return res.status(404).json({ success: false, message: "No analysis found" });
     }
 
-    console.log("Analysis found. Sending response...");
+    // console.log("Analysis found. Sending response...");
     res.status(200).json({ success: true, data: analysis });
   } catch (err) {
     console.error("getAnalysisForUser  main catch main error error:", err);
@@ -150,10 +152,76 @@ export const checkresultuser = async(req,res)=>{
         console.log("Nnnnnnnnnnnnnnnnnnno analysis found");
     return res.status(404).json({ success: false, message: "mila hi nhi bc analysisNo analysis found" });
      }
-       console.log("analysis in checkresultuser",analysis);
+      //  console.log("analysis in checkresultuser",analysis);
     res.status(200).json({ success: true, data: analysis });
   } catch (err) {
     console.error("getAnalysisForUser error:", err);
     res.status(500).json({ success: false, message: "tech he nhi kar paya Failed to fetch analysis" });
   }
 }
+
+
+// No more global chatHistory variable!
+// let chatHistory = []; // DELETE THIS LINE
+
+export const askChat = async (req, res) => {
+  // Get both the new prompt AND the previous chat history from the frontend
+  const { prompt, history } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ success: false, message: "Prompt is required" });
+  }
+
+  try {
+    // Build messages for Groq from the history sent by the client
+    const messages = history.flatMap(msg => [
+      { role: "user", content: msg.prompt },
+      // Make sure to only include responses that actually exist
+      msg.response ? { role: "assistant", content: msg.response } : null
+    ]).filter(Boolean); // filter(Boolean) removes any null entries
+
+    // Add the user's NEW prompt to the messages
+    messages.push({ role: "user", content: prompt });
+
+    // System instruction for expert dermatology & nutrition answers
+    messages.unshift({
+      role: "system",
+      content: `
+You are an expert dermatologist and nutritionist specialized in skin care. 
+Answer only about dermatology, skin health, and diet. 
+
+Guidelines for responses:
+- Be precise and concise; avoid fluff.
+- Provide actionable advice that can be applied immediately.
+- Use simple language, easy to follow.
+- If the question involves causes, remedies, or routines, organize answers in bullet points or numbered lists.
+- Keep answers focused on the user's question; do not provide unrelated information.
+- Maintain professional tone, but make it readable for general users.
+- Limit answer length: prioritize quality over quantity.
+- Always include practical tips when relevant.
+`
+    });
+
+    // Call Groq chat completions
+    const result = await groq.chat.completions.create({
+       model: "openai/gpt-oss-20b", // Using a recommended model, change if needed
+      messages,
+      response_format: { type: "text" }
+    });
+
+    const botReply = result.choices[0]?.message?.content?.trim() || "Sorry, I could not answer that.";
+
+    // IMPORTANT: Send back ONLY the new response, not the whole chat.
+    res.status(200).json({ success: true, response: botReply });
+
+  } catch (error) {
+    console.error("Groq API error:", error);
+    res.status(500).json({ success: false, message: "Failed to get response from Groq", error: error.message });
+  }
+};
+
+// The resetChat function is now controlled by the frontend, but you can keep this endpoint if you want a server-side way to log resets.
+export const resetChat = (req, res) => {
+  // This endpoint doesn't need to do anything with a database or memory anymore.
+  res.status(200).json({ success: true, message: "Chat reset signal received" });
+};
